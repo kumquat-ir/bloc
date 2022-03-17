@@ -107,3 +107,6 @@ template uniform*(names: varargs[string]) =
   ## Just calls `adduniforms(Shader, varargs[string])` but with nicer syntax
 
   uniforms.add(names)
+
+proc `+`*(a: pointer, b: pointer): pointer =
+  return cast[pointer](cast[int](a) + cast[int](b))
