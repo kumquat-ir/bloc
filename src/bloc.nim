@@ -1,8 +1,7 @@
 import sdl2
 import opengl
-import util/glutils
-import util/types
-import stb_image/read as stbi
+import util/utils
+import types/[buffer, shader, texture, vao]
 
 discard sdl2.init(INIT_EVERYTHING)
 
@@ -49,27 +48,7 @@ unbindvao VAO1
 unbindbuf VBO1
 unbindbuf EBO1
 
-var width, height, numch: int
-stbi.setFlipVerticallyOnLoad true
-var imgdata = cast[ptr UncheckedArray[byte]](
-  stbi.load("src/resources/astrabotpfp3.png", width, height, numch, stbi.Default)
-  ) + cast[pointer](16) # there are 16 bytes of left over header data or something here, get rid of them
-
-var texture: GLuint
-glGenTextures(1, addr texture)
-glActiveTexture(GL_TEXTURE0)
-glBindTexture(GL_TEXTURE_2D, texture)
-
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-
-glTexImage2D(GL_TEXTURE_2D, 0, GLint GL_RGBA, GLsizei width, GLsizei height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgdata)
-glGenerateMipmap(GL_TEXTURE_2D)
-
-glBindTexture(GL_TEXTURE_2D, 0)
+var tex = inittex("src/resources/astrabotpfp3.png", GL_TEXTURE0)
 
 useshader shaderProgram
 glUniform1i(shaderProgram["tex0"], 0)
@@ -79,7 +58,7 @@ proc render() =
   glClear(GL_COLOR_BUFFER_BIT)
   useshader shaderProgram
   glUniform1f(shaderProgram["scale"], 1.5)
-  glBindTexture(GL_TEXTURE_2D, texture)
+  bindtex tex
   bindvao VAO1
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nil)
 
@@ -101,6 +80,7 @@ while runGame:
 delvao VAO1
 delbuf VBO1
 delbuf EBO1
+deltex tex
 delshader shaderProgram
 
 destroy window
