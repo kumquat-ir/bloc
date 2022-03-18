@@ -7,7 +7,7 @@ type
     textype: GLenum
     width, height, numch: int
 
-proc inittex*(path: string, slot: GLenum, textype: GLenum = GL_TEXTURE_2D, format: GLenum = GL_RGBA,
+proc inittex*(path: string, slot: GLenum = GL_TEXTURE0, textype: GLenum = GL_TEXTURE_2D, format: GLenum = GL_RGBA,
     pixtype: GLenum = GL_UNSIGNED_BYTE, filter: GLint = GL_LINEAR): Texture =
   result.textype = textype
 

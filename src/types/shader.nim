@@ -27,17 +27,17 @@ template shader*(shadername: untyped, parts: untyped) =
   ##
   ## `shadername` should be an undeclared identifier, which the program will be assigned to
   ##
-  ## `parts` should be a code block containing `shaderpart`, `vert`, and/or `frag` statements
+  ## `parts` should be a code block containing `shaderpart`, `uniform`, `vert`, and/or `frag` statements
 
-  let shaderid {.inject.} = glCreateProgram()
-  var todel {.inject.}: seq[GLuint]
-  var uniforms {.inject.}: seq[string]
+  let shaderid_shadertmp {.inject.} = glCreateProgram()
+  var todel_shadertmp {.inject.}: seq[GLuint]
+  var uniforms_shadertmp {.inject.}: seq[string]
   parts
-  shaderid.glLinkProgram()
-  for shaderdel in todel:
+  shaderid_shadertmp.glLinkProgram()
+  for shaderdel in todel_shadertmp:
     glDeleteShader shaderdel
-  var shadername = initshader(shaderid)
-  shadername.adduniforms(uniforms)
+  var shadername = initshader(shaderid_shadertmp)
+  shadername.adduniforms(uniforms_shadertmp)
 
 template frag*(path: string) =
   ## Adds a fragment shader to a shader program inside a `shader:` template
@@ -70,12 +70,12 @@ template shaderpart*(path: string, shadertype: GLenum) =
   shader.glCompileShader()
   deallocCStringArray ssrc
 
-  shaderid.glAttachShader(shader)
-  todel.add(shader)
+  shaderid_shadertmp.glAttachShader(shader)
+  todel_shadertmp.add(shader)
 
 template uniform*(names: varargs[string]) =
   ## Adds one or more uniforms to the shader object defined inside a `shader:` template
   ##
   ## Just calls `adduniforms(Shader, varargs[string])` but with nicer syntax
 
-  uniforms.add(names)
+  uniforms_shadertmp.add(names)

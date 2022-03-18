@@ -1,16 +1,16 @@
 import sdl2
 import opengl
+import std/os
 import util/utils
 import types/[buffer, shader, texture, vao]
 
-discard sdl2.init(INIT_EVERYTHING)
+getAppDir().parentDir().setCurrentDir()
 
-var screenWidth: cint = 600
-var screenHeight: cint = 600
+discard sdl2.init(INIT_VIDEO or INIT_EVENTS)
 
 discard SDL_GL_CONTEXT_MAJOR_VERSION.glSetAttribute(4)
 discard SDL_GL_CONTEXT_MINOR_VERSION.glSetAttribute(6)
-var window = createWindow("opened gl", 100, 100, screenWidth, screenHeight, SDL_WINDOW_OPENGL)
+var window = createWindow("opened gl", 100, 100, 600, 600, SDL_WINDOW_OPENGL)
 discard window.glCreateContext()
 
 loadExtensions()
@@ -48,7 +48,7 @@ unbindvao VAO1
 unbindbuf VBO1
 unbindbuf EBO1
 
-var tex = inittex("src/resources/astrabotpfp3.png", GL_TEXTURE0)
+var tex = inittex("src/resources/astrabotpfp3.png")
 
 useshader shaderProgram
 glUniform1i(shaderProgram["tex0"], 0)
