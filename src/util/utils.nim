@@ -47,3 +47,7 @@ macro hex4fa*(code: untyped) =
 macro hex3f*(code: untyped) =
   result = code
   hextraverse(result, hexadd3f)
+
+template timercallback*(name: untyped, body:untyped) {.dirty.} =
+  var name: TimerCallback = proc(interval: uint32; param: pointer): uint32 {.cdecl.} =
+    body

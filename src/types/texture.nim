@@ -9,6 +9,18 @@ type
 
 proc inittex*(path: string, slot: GLenum = GL_TEXTURE0, textype: GLenum = GL_TEXTURE_2D, format: GLenum = GL_RGBA,
     pixtype: GLenum = GL_UNSIGNED_BYTE, filter: GLint = GL_LINEAR): Texture =
+  ## Initialize a GL texture from the image file specified by `path`
+  ## 
+  ## `slot` should be `GL_TEXTURE0` etc., default `GL_TEXTURE0`
+  ## 
+  ## `textype` should be `GL_TEXTURE_2D` or similar, default `GL_TEXTURE_2D`
+  ## 
+  ## `format` should be the pixel format of the image, default `GL_RGBA`
+  ## 
+  ## `pixtype` should be the type of the pixel data, default `GL_UNSIGNED_BYTE`
+  ## 
+  ## `filter` should be the filter used for scaling (via GL_TEXTURE_[MIN, MAG]_FILTER), default `GL_LINEAR`
+  
   result.textype = textype
 
   stbi.setFlipVerticallyOnLoad(true)
