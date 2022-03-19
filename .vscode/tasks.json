@@ -6,7 +6,7 @@
 		{
 			"label": "buildrun",
 			"type": "shell",
-			"command": "nimble run --verbose bloc",
+			"command": "mangohud --dlsym nimble run --verbose bloc",
 			"problemMatcher": [],
 			"group": {
 				"kind": "build",

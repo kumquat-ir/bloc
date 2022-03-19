@@ -2,7 +2,7 @@ import sdl2
 import opengl
 import std/os
 import glm
-import util/utils
+import util/[utils, camera]
 import types/[buffer, shader, texture, vao]
 
 getAppDir().parentDir().setCurrentDir()
@@ -10,7 +10,7 @@ getAppDir().parentDir().setCurrentDir()
 var screenWidth: cint = 600
 var screenHeight: cint = 600
 
-discard sdl2.init(INIT_VIDEO or INIT_EVENTS or INIT_TIMER)
+discard sdl2.init(INIT_VIDEO or INIT_EVENTS)
 
 discard SDL_GL_CONTEXT_MAJOR_VERSION.glSetAttribute(4)
 discard SDL_GL_CONTEXT_MINOR_VERSION.glSetAttribute(6)
@@ -42,7 +42,7 @@ var indeces: array[18, GLuint] = [
 
 shader shaderProgram:
   vert "src/shaders/main.vert"
-  uniform "scale", "model", "view", "proj"
+  uniform "scale", "cam"
   frag "src/shaders/main.frag"
   uniform "tex0"
 
@@ -70,29 +70,14 @@ glUniform1i(shaderProgram["tex0"], 0)
 
 glEnable GL_DEPTH_TEST
 
-var rot:float = 0
-
-timercallback addrot:
-  rot += 0.5
-  return interval
+var cam = initCamera(screenWidth, screenHeight, vec3(0'f, 0, 2))
 
 proc render() =
   hex4fa glClearColor(!0x111111)
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
   useshader shaderProgram
 
-  # perspective projection stuff
-  var model, view, proj: Mat4[GLfloat]
-  model = mat4(1'f)
-  view = mat4(1'f)
-  proj = mat4(1'f)
-  model = model.rotate(radians(rot), vec3(0'f, 1, 0))
-  view = view.translate(0, -0.5, -2)
-  proj = perspective(GLfloat radians(45.0), (screenWidth / screenHeight), 0.1, 100)
-
-  glUniformMatrix4fv(shaderProgram["model"], 1, GL_FALSE, caddr model)
-  glUniformMatrix4fv(shaderProgram["view"], 1, GL_FALSE, caddr view)
-  glUniformMatrix4fv(shaderProgram["proj"], 1, GL_FALSE, caddr proj)
+  cam.setupMatrices(shaderProgram["cam"])
 
   glUniform1f(shaderProgram["scale"], 1.5)
   bindtex tex
@@ -106,13 +91,27 @@ var
   evt = sdl2.defaultEvent
   runGame = true
 
-var rottimer = addTimer(30, addrot, nil)
+var sdlkbd: ptr array[0..512, uint8]
 
 while runGame:
   while pollEvent(evt):
-    if evt.kind == QuitEvent:
+    case evt.kind:
+    of QuitEvent:
       runGame = false
       break
+    of MouseButtonDown:
+      if evt.button.button == BUTTON_LEFT:
+        discard setRelativeMouseMode(True32)
+    of MouseButtonUp:
+      if evt.button.button == BUTTON_LEFT:
+        discard setRelativeMouseMode(False32)
+    of MouseMotion:
+      if getRelativeMouseMode():
+        cam.handleMouse(evt.motion.xrel, evt.motion.yrel)
+    else:
+      discard
+  sdlkbd = getKeyboardState(nil)
+  cam.handleKbd(sdlkbd)
 
   render()
 
@@ -122,5 +121,4 @@ delbuf VBO1
 delbuf EBO1
 deltex tex
 delshader shaderProgram
-discard removeTimer rottimer
 destroy window
