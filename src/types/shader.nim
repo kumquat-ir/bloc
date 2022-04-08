@@ -6,7 +6,7 @@ type
     id: GLuint
     uniforms: Table[string, GLint]
 
-proc initshader*(id: GLuint): Shader =
+func initshader*(id: GLuint): Shader =
   result.id = id
 
 proc useshader*(shader: Shader) =
@@ -17,9 +17,9 @@ proc delshader*(shader: Shader) =
 
 proc adduniforms*(shader: var Shader, names: varargs[string]) =
   for name in names:
-    shader.uniforms[name] = glGetUniformLocation(shader.id, name)
+    shader.uniforms[name] = glGetUniformLocation(shader.id, cstring name)
 
-proc `[]`*(shader: Shader, name: string): GLint =
+func `[]`*(shader: Shader, name: string): GLint =
   return shader.uniforms[name]
 
 template shader*(shadername: untyped, parts: untyped) =

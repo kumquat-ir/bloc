@@ -1,7 +1,7 @@
 import sdl2
 import opengl
-import std/os
 import glm
+import std/os
 import util/[utils, camera]
 import types/[buffer, shader, texture, vao]
 

@@ -18,7 +18,7 @@ proc hexadd3f(val: BiggestInt): seq[NimNode] =
   for node in [newLit b, newLit g, newLit r]:
     result.add(node)
 
-proc hextraverse(root: NimNode, nodegenfn: proc) =
+proc hextraverse(root: NimNode, nodegenfn: proc(val: BiggestInt): seq[NimNode]) =
   var found: seq[int]
   for i, child in root.pairs:
     if child.kind == nnkPrefix and child[0].kind == nnkIdent and child[0] == ident("!"):
@@ -48,6 +48,6 @@ macro hex3f*(code: untyped) =
   result = code
   hextraverse(result, hexadd3f)
 
-template timercallback*(name: untyped, body:untyped) {.dirty.} =
+template timercallback*(name: untyped, body: untyped) {.dirty.} =
   var name: TimerCallback = proc(interval: uint32; param: pointer): uint32 {.cdecl.} =
     body
