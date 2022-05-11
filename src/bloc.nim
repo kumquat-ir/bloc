@@ -20,15 +20,14 @@ discard window.glCreateContext()
 loadExtensions()
 
 # vertex array, featuring fancy hex -> float color expansion
-hex3f:
-  var vertices: array[40, GLfloat] = [
-    # pos(3), color(3), tex coords(2)
-    -0.5'f, 0, 0.5, !0x776655, 0, 0,
-    -0.5, 0, -0.5, !0x776655, 5, 0,
-    0.5, 0, -0.5, !0x776655, 0, 0,
-    0.5, 0, 0.5, !0x776655, 5, 0,
-    0, 0.8, 0, !0xCCBBAA, 2.5, 5
-  ]
+var vertices {.hex3f.}: array[40, GLfloat] = [
+  # pos(3), color(3), tex coords(2)
+  -0.5'f, 0, 0.5, !0x776655, 0, 0,
+  -0.5, 0, -0.5, !0x776655, 5, 0,
+  0.5, 0, -0.5, !0x776655, 0, 0,
+  0.5, 0, 0.5, !0x776655, 5, 0,
+  0, 0.8, 0, !0xCCBBAA, 2.5, 5
+]
 
 # index array, specifies what vertices triangles will be drawn between
 var indeces: array[18, GLuint] = [
@@ -54,9 +53,7 @@ var VBO1 = initvbo(addr vertices, sizeof vertices)
 var EBO1 = initebo(addr indeces, sizeof indeces)
 
 # define what parts of vertices[] should be assigned to which layout in main.vert
-VAO1.linkattrib(VBO1, 0, 3, cGL_FLOAT, 8 * sizeof GLfloat, cast[pointer](0))
-VAO1.linkattrib(VBO1, 1, 3, cGL_FLOAT, 8 * sizeof GLfloat, cast[pointer](3 * sizeof GLfloat))
-VAO1.linkattrib(VBO1, 2, 2, cGL_FLOAT, 8 * sizeof GLfloat, cast[pointer](6 * sizeof GLfloat))
+VAO1.linkarr(VBO1, 3, 3, 2)
 
 unbindvao VAO1
 unbindbuf VBO1

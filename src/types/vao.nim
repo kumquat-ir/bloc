@@ -27,3 +27,10 @@ proc unbindvao*(ao: VAO) =
 proc delvao*(ao: var VAO) =
   glDeleteVertexArrays(1, addr ao.id)
 
+proc linkarr*(ao: VAO, bo: VBO, lens: varargs[GLint]) =
+  var layout: GLuint = 0
+  var offset = 0
+  for llen in lens:
+    ao.linkattrib(bo, layout, llen, cGL_FLOAT, 8 * sizeof GLfloat, cast[pointer](offset))
+    layout += 1
+    offset += llen * sizeof GLfloat
