@@ -1,5 +1,5 @@
 import opengl
-import stb_image/read as stbi
+from stb_image/read as stbi import nil
 
 type
   Texture* = object

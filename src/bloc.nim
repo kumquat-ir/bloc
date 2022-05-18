@@ -49,8 +49,8 @@ shader shaderProgram:
 var VAO1 = initvao()
 bindvao VAO1
 
-var VBO1 = initvbo(addr vertices, sizeof vertices)
-var EBO1 = initebo(addr indeces, sizeof indeces)
+var VBO1 = initvbo(vertices)
+var EBO1 = initebo(indeces)
 
 # define what parts of vertices[] should be assigned to which layout in main.vert
 VAO1.linkarr(VBO1, 3, 3, 2)

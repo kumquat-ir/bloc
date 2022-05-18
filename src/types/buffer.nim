@@ -17,10 +17,16 @@ proc initvbo*(data: ptr, size: GLsizeiptr): VBO =
 
   initbuf(result, data, size)
 
+template initvbo*(data: typed): VBO =
+  initvbo(addr data, sizeof data)
+
 proc initebo*(data: ptr, size: GLsizeiptr): EBO =
   result.buftype = GL_ELEMENT_ARRAY_BUFFER
 
   initbuf(result, data, size)
+
+template initebo*(data: typed): EBO =
+  initebo(addr data, sizeof data)
 
 proc bindbuf*(buf: GLbuf) =
   glBindBuffer(buf.buftype, buf.id)
